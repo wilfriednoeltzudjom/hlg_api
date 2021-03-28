@@ -11,11 +11,10 @@ In the project directory, you can run:
 Runs the server in the development mode
 Your endpoint will be accessible via [http://localhost:5000](http://localhost:5000)
 
-### `npm test:watch`
+### `npm run test:watch`
 
 Launches the test runner in the interactive watch mode
 
-### `npm run build`
+### `npm run start`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Runs the server in the production mode
