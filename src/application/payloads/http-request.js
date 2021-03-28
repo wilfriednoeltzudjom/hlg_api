@@ -39,7 +39,7 @@ module.exports = class HttpRequest {
     return this.#session;
   }
 
-  static fromExpress(expresRequest) {
-    return new HttpRequest(expresRequest);
+  static fromExpress(expressRequest) {
+    return new HttpRequest(expressRequest);
   }
 };
