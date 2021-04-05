@@ -1,19 +1,26 @@
 const { Session } = require('../../database/entities');
-const { accountRoles } = require('../../database/enums');
+const { accountRoles, sessionStatuses } = require('../../database/enums');
 const { ResourceNotFoundError, BadRequestError } = require('../../application/helpers/errors');
 
 module.exports = function buildSignIn({ databaseService, hashUtils, tokenUtils }) {
   const { accountRepository, staffMemberRepository, sessionRepository } = databaseService;
 
-  async function execute({ username, password }) {
+  async function execute({ username, password, role }) {
     const account = await accountRepository.findOne({ username }, { includePassword: true });
-    if (!account) throw new ResourceNotFoundError(`Username <${username}> was not found`);
+    if (!account) throw new ResourceNotFoundError(`Account with username <${username}> was not found`);
+    if (role && role !== account.role) throw new BadRequestError(`You're not authorized to access this app`);
 
     const sameAsHash = await hashUtils.isValueSameAsHash({ value: password, hash: account.password });
     if (!sameAsHash) throw new BadRequestError(`Invalid password <${password}> for username <${username}>`);
     account.password = undefined;
+    await ensureThereIsNoActiveSession(account);
 
     return createSignInResponse(account);
+  }
+
+  async function ensureThereIsNoActiveSession(account) {
+    const existingSession = await sessionRepository.findOne({ accountId: account.id, status: sessionStatuses.RUNNING });
+    if (existingSession) throw new BadRequestError(`Username <${account.username}> already has an active session`);
   }
 
   async function createSignInResponse(account) {

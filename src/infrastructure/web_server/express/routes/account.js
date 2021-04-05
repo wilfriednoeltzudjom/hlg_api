@@ -37,4 +37,13 @@ router.put('/sign-out', authHandler, (req, res, next) => {
     .catch((error) => next(error));
 });
 
+router.get('/profile', authHandler, (req, res, next) => {
+  accountController
+    .getProfile(HttpRequest.fromExpress(req))
+    .then((httpResponse) => {
+      res.status(httpResponse.status).json(httpResponse.toJSON());
+    })
+    .catch((error) => next(error));
+});
+
 module.exports = router;
