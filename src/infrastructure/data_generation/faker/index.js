@@ -44,6 +44,15 @@ module.exports = class FakerDataGeneration extends DataGeneration {
   }
 
   generateId() {
-    return faker.random.uuid();
+    return faker.datatype.uuid();
+  }
+
+  generateSupplier() {
+    return {
+      companyName: faker.company.companyName(),
+      email: faker.internet.email(),
+      phone: faker.phone.phoneNumber('#########'),
+      officeAddress: this.generateAddress(),
+    };
   }
 };

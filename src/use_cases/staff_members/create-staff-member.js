@@ -7,23 +7,9 @@ module.exports = function buildCreateStaffMember({ databaseService, hashUtils })
   const { staffMemberRepository } = databaseService;
   const createAccountUseCase = buildCreateAccountUseCase({ databaseService, hashUtils });
 
-  async function execute({
-    gender,
-    firstName,
-    lastName,
-    birthDate,
-    email,
-    phone,
-    identityNumber,
-    city,
-    neighborhood,
-    indication,
-    role,
-    username,
-    password,
-  }) {
+  async function execute({ gender, firstName, lastName, birthDate, email, phone, identityNumber, homeAddress, role, username, password }) {
     const staffMember = StaffMember.newInstance({ gender, firstName, lastName, birthDate, phone, email, identityNumber });
-    staffMember.homeAddress = Address.newInstance({ city, neighborhood, indication });
+    staffMember.homeAddress = Address.newInstance(homeAddress);
     await ensureStaffMemberDoesNotExit(staffMember);
     staffMember.account = await createAccountUseCase.execute({ role, username, password });
 
@@ -36,7 +22,7 @@ module.exports = function buildCreateStaffMember({ databaseService, hashUtils })
     });
     if (existingStaffMember) {
       throw new BadRequestError(
-        `A staff member has been already created with one of the information email: ${staffMember.email}, phone: ${staffMember.phone}, identityNumber: ${staffMember.identityNumber}`
+        `Staff member with email <${staffMember.email}>, phone <${staffMember.phone}> or identityNumber <${staffMember.identityNumber}> already exists`
       );
     }
   }

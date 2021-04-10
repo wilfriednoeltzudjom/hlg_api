@@ -4,12 +4,14 @@ const DatabaseService = require('../database-service');
 const MongooseAccountRepository = require('./repositories/account');
 const MongooseStaffMemberRepository = require('./repositories/staff-member');
 const MongooseSessionRepository = require('./repositories/session');
+const MongooseSupplierRepository = require('./repositories/supplier');
 
 module.exports = class MongooseDatabaseService extends DatabaseService {
   initRepositories() {
     this.accountRepository = new MongooseAccountRepository();
     this.staffMemberRepository = new MongooseStaffMemberRepository();
     this.sessionRepository = new MongooseSessionRepository();
+    this.supplierRepository = new MongooseSupplierRepository();
   }
 
   async connectDatabase() {

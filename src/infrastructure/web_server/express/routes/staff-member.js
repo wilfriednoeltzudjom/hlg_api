@@ -8,7 +8,7 @@ const accessRightsHandler = require('../middlewares/access-rights-handler');
 
 const router = express.Router();
 
-router.post('/', accessRightsHandler([accountRoles.ADMINISTRATOR]), (req, res, next) => {
+router.post('/', accessRightsHandler(accountRoles.ADMINISTRATOR), (req, res, next) => {
   staffMemberController
     .createStaffMember(HttpRequest.fromExpress(req))
     .then((httpResponse) => res.status(httpResponse.status).json(httpResponse.toJSON()))

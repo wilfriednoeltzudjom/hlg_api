@@ -4,7 +4,6 @@ const dependencies = require('../../../src/application/helpers/dependencies');
 const signInUseCase = require('../../../src/use_cases/accounts/sign-in')(dependencies);
 const { AccountFactory } = require('../../../src/database/factories');
 const { accountRoles } = require('../../../src/database/enums');
-const cons = require('consolidate');
 
 describe('Use Cases - Sign In', () => {
   const shared = {};

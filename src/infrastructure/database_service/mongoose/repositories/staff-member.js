@@ -20,7 +20,7 @@ module.exports = class MongooseStaffMemberRepository extends StaffMemberReposito
     return parseStaffMemberModel(staffMemberModel, { account: staffMember.account });
   }
 
-  async findOne(params) {
+  async findOne(params = {}) {
     const staffMemberModel = await StaffMemberModel.findOne(assignSearchingParams(params));
 
     return parseStaffMemberModel(staffMemberModel);

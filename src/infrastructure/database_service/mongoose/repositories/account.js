@@ -19,7 +19,7 @@ module.exports = class MongooseAccountRepository extends AccountRepository {
     return parseAccountModel(accountModel);
   }
 
-  async findOne(params, options) {
+  async findOne(params = {}, options = {}) {
     const accountModel = await AccountModel.findOne(assignSearchingParams(params));
 
     return parseAccountModel(accountModel, {}, options);

@@ -13,9 +13,15 @@ module.exports = class Repository {
 
   updateMany() {}
 
-  delete() {}
+  count() {}
 
-  safeDelete() {}
+  deleteOne() {}
+
+  deleteMany() {}
+
+  safeDeleteOne() {}
+
+  safeDeleteMany() {}
 
   isExist() {}
 };

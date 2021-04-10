@@ -24,12 +24,7 @@
     ],
     "no-console": "off",
     "class-methods-use-this": "off",
-    "no-unused-vars": [
-      "warn",
-      {
-        "argsIgnorePattern": "^_"
-      }
-    ],
+    "no-unused-vars": "warn",
     "no-new": "off",
     "no-eval": "off",
     "lines-between-class-members": "off"

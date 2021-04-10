@@ -20,13 +20,13 @@ module.exports = class MongooseSessionRepository extends SessionRepository {
     return parseSessionModel(sessionModel, { account: session.account });
   }
 
-  async findOne(params) {
+  async findOne(params = {}) {
     const sessionModel = await SessionModel.findOne(assignSearchingParams(params));
 
     return parseSessionModel(sessionModel);
   }
 
-  async forceUpdateOne(params, updates) {
+  async forceUpdateOne(params = {}, updates = {}) {
     const sessionModel = await SessionModel.findOne(params);
     Object.assign(sessionModel, updates);
     await sessionModel.save();

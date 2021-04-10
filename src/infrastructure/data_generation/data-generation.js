@@ -33,4 +33,10 @@ module.exports = class DataGeneration {
   generateAlpaNumeric() {}
 
   generateId() {}
+
+  generateSupplier() {}
+
+  generateCategory() {}
+
+  generateProduct() {}
 };

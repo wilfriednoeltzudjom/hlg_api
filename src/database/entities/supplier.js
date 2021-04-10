@@ -1,9 +1,13 @@
 const Entity = require('../../application/helpers/entity');
 const entityValidator = require('../../application/helpers/entity-validator');
 
+const buildAddress = require('./address');
+
 module.exports = function buildSupplier({ idGeneration, dataValidation, dateUtils }) {
+  const Address = buildAddress({ dataValidation });
+
   function validateCode(code) {
-    dataValidation.validateStringAsRequired(code);
+    dataValidation.validateStringAsRequired(code, 'Supplier code');
   }
 
   function validateCompanyName(companyName) {
@@ -32,7 +36,6 @@ module.exports = function buildSupplier({ idGeneration, dataValidation, dateUtil
     constructor({ id, createdAt, updatedAt, updatedBy, deleted, deletedAt, deletedBy, code, companyName, email, phone, officeAddress }) {
       super({ id, createdAt, updatedAt, updatedBy, deleted, deletedAt, deletedBy });
 
-      validateCode(code);
       validateCompanyName(companyName);
       validateEmail(email);
       validatePhone(phone);
@@ -96,8 +99,15 @@ module.exports = function buildSupplier({ idGeneration, dataValidation, dateUtil
         companyName: this.#companyName,
         email: this.#email,
         phone: this.#phone,
-        officeAddress: this.#officeAddress,
+        officeAddress: this.#officeAddress ? this.#officeAddress.toJSON() : {},
       });
+    }
+
+    static fromJSON({ officeAddress, ...restProps }) {
+      const subProps = {};
+      if (dataValidation.isValidObject(officeAddress)) subProps.officeAddress = Address.fromJSON(officeAddress);
+
+      return new Supplier({ ...restProps, ...subProps });
     }
 
     static newInstance({
