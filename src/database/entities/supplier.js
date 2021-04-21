@@ -1,5 +1,6 @@
 const Entity = require('../../application/helpers/entity');
 const entityValidator = require('../../application/helpers/entity-validator');
+const { toLowerCase } = require('../../application/helpers/entity-utils');
 
 const buildAddress = require('./address');
 
@@ -36,16 +37,11 @@ module.exports = function buildSupplier({ idGeneration, dataValidation, dateUtil
     constructor({ id, createdAt, updatedAt, updatedBy, deleted, deletedAt, deletedBy, code, companyName, email, phone, officeAddress }) {
       super({ id, createdAt, updatedAt, updatedBy, deleted, deletedAt, deletedBy });
 
-      validateCompanyName(companyName);
-      validateEmail(email);
-      validatePhone(phone);
-      validateOfficeAddress(officeAddress);
-
-      this.#code = code;
-      this.#companyName = companyName;
-      this.#email = email;
-      this.#phone = phone;
-      this.#officeAddress = officeAddress;
+      this.code = code;
+      this.companyName = companyName;
+      this.email = email;
+      this.phone = phone;
+      this.officeAddress = officeAddress;
     }
 
     get code() {
@@ -72,7 +68,7 @@ module.exports = function buildSupplier({ idGeneration, dataValidation, dateUtil
 
     set email(email) {
       validateEmail(email);
-      this.#email = email;
+      this.#email = toLowerCase(email);
     }
 
     get phone() {
@@ -94,13 +90,14 @@ module.exports = function buildSupplier({ idGeneration, dataValidation, dateUtil
     }
 
     toJSON() {
-      return Object.assign(super.toJSON(), {
+      return {
+        ...super.toJSON(),
         code: this.#code,
         companyName: this.#companyName,
         email: this.#email,
         phone: this.#phone,
         officeAddress: this.#officeAddress ? this.#officeAddress.toJSON() : {},
-      });
+      };
     }
 
     static fromJSON({ officeAddress, ...restProps }) {
@@ -123,7 +120,19 @@ module.exports = function buildSupplier({ idGeneration, dataValidation, dateUtil
       phone,
       officeAddress,
     } = {}) {
-      return new Supplier({ id, createdAt, updatedAt, updatedBy, deleted, deletedAt, deletedBy, companyName, email, phone, officeAddress });
+      return new Supplier({
+        id,
+        createdAt,
+        updatedAt,
+        updatedBy,
+        deleted,
+        deletedAt,
+        deletedBy,
+        companyName,
+        email,
+        phone,
+        officeAddress,
+      });
     }
   };
 };

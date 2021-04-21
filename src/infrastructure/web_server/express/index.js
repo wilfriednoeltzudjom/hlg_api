@@ -15,19 +15,19 @@ const { accountRoles } = require('../../../database/enums');
 
 const app = express();
 
-app.use(loggingHandler);
-app.use(cors({ credentials: true, origin: [process.env.FRONT_APP_BASE_URL] }));
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-app.use(cookieParser());
-
-app.use('/v1/accounts', accountRoutes);
-app.use('/v1/staff-members', authHandler, staffMemberRoutes);
-app.use('/v1/suppliers', authHandler, accessRightsHandler(accountRoles.MANAGER, accountRoles.DIRECTOR), supplierRoutes);
-
-app.use(errorHandler);
-
 function start(port) {
+  app.use(loggingHandler);
+  app.use(cors({ credentials: true, origin: [process.env.FRONT_APP_BASE_URL] }));
+  app.use(express.urlencoded({ extended: false }));
+  app.use(express.json());
+  app.use(cookieParser());
+
+  app.use('/v1/accounts', accountRoutes);
+  app.use('/v1/staff-members', authHandler, staffMemberRoutes);
+  app.use('/v1/suppliers', authHandler, accessRightsHandler(accountRoles.MANAGER, accountRoles.DIRECTOR), supplierRoutes);
+
+  app.use(errorHandler);
+
   return new Promise((resolve) => {
     app.listen(port, resolve);
   });

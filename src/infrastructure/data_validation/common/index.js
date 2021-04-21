@@ -47,7 +47,7 @@ module.exports = class CommonDataValidation extends DataValidation {
 };
 
 function isNotNull(value) {
-  return value !== null;
+  return value !== null && value !== undefined;
 }
 
 function isString(value) {
@@ -66,8 +66,8 @@ function isNumber(value) {
   return typeof value === 'number';
 }
 
-function isPhoneNumber(value) {
-  return /\d{9}/.test(value);
+function isPhoneNumber() {
+  return true;
 }
 
 function isEmail(value) {

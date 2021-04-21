@@ -19,7 +19,7 @@ module.exports = function buildCreateSupplier({ databaseService }) {
 
   async function generateSupplierCode() {
     const suppliersCount = await supplierRepository.count();
-    const codePrefix = 'SU';
+    const codePrefix = 'SU-';
 
     return codePrefix.concat(String(suppliersCount + 1).padStart(5, '0'));
   }

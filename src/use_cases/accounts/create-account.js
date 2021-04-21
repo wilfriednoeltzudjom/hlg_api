@@ -14,7 +14,7 @@ module.exports = function buildCreateAccount({ databaseService, hashUtils }) {
 
   async function ensureAccountDoesNotExit(account) {
     const existingAccount = await accountRepository.findOne({ username: account.username });
-    if (existingAccount) throw new BadRequestError(`Username ${account.username} is already taken`);
+    if (existingAccount) throw new BadRequestError(`Username <${account.username}> is already taken`);
   }
 
   return { execute };

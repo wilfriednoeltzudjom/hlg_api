@@ -5,7 +5,7 @@ module.exports = function buildSignOut({ databaseService, dateUtils }) {
   const { sessionRepository } = databaseService;
 
   async function execute({ session = {} } = {}) {
-    ensureValuesAreProvided([session, session?.id], '{session} or {session.id} parameter is missing');
+    ensureValuesAreProvided([session, session.id], '{session} or {session.id} parameter is missing');
 
     const persistedSession = await sessionRepository.findOne({ id: session.id });
     if (persistedSession.status === sessionStatuses.ENDED) throw new BadRequestError('Your session has been already ended');

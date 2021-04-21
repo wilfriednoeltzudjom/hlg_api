@@ -40,17 +40,17 @@ module.exports = class MongooseSupplierRepository extends SupplierRepository {
     return parseSupplierModel(supplierModel);
   }
 
-  async updateOne(supplier, params = {}) {
+  async updateOne(supplierId, supplier, options = {}) {
     const { id, ...props } = supplier.toJSON();
 
-    return this.forceUpdateOne({ id }, { ...props, ...params });
+    return this.forceUpdateOne({ id: id || supplierId }, props, options);
   }
 
   async count(params = {}) {
-    return SupplierModel.countDocuments(params);
+    return SupplierModel.countDocuments(assignSearchingParams(params));
   }
 
-  async safeDeleteOne(supplier, deleteParams) {
-    return this.forceUpdateOne({ id: supplier.id }, deleteParams);
+  async safeDeleteOne(supplierId, deleteParams) {
+    return this.forceUpdateOne({ id: supplierId }, deleteParams);
   }
 };

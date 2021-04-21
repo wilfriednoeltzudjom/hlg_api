@@ -10,7 +10,7 @@ module.exports = function buildAddress({ dataValidation }) {
   }
 
   function validateIndication(indication) {
-    dataValidation.validateStringAsRequired(indication, 'Address indication');
+    dataValidation.validateString(indication, 'Address indication');
   }
 
   return class Address {

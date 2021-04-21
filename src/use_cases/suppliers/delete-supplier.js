@@ -1,13 +1,12 @@
-const { getSafeDeleteParams } = require('../helpers');
-const supplierHelper = require('../helpers/supplier');
+const { getSafeDeleteParams, ensureEntityExist } = require('../helpers');
 
 module.exports = function buildDeleteSupplier({ databaseService, dateUtils }) {
   const { supplierRepository } = databaseService;
 
   async function execute({ supplierId, account }) {
-    const supplier = await supplierHelper.findSupplier(supplierRepository, { id: supplierId });
+    await ensureEntityExist('Supplier', supplierRepository, { id: supplierId });
 
-    return supplierRepository.safeDeleteOne(supplier, getSafeDeleteParams(dateUtils, account));
+    return supplierRepository.safeDeleteOne(supplierId, getSafeDeleteParams(dateUtils, account));
   }
 
   return { execute };

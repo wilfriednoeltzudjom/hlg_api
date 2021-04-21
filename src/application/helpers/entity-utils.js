@@ -10,8 +10,14 @@ function capitalize(value) {
   return value[0].toUpperCase().concat(value.substring(1).toLowerCase());
 }
 
+function toLowerCase(value) {
+  if (!isString(value)) return value;
+
+  return value.toLowerCase();
+}
+
 function isString(value) {
   return value && typeof value === 'string';
 }
 
-module.exports = { capitalize, capitalizePersonName };
+module.exports = { capitalize, capitalizePersonName, toLowerCase };
