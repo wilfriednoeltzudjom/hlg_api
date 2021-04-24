@@ -10,7 +10,7 @@ const defaultOptions = {
 
 module.exports = class JwtTokenUtils extends TokenUtils {
   generateToken(payload, options = {}) {
-    return jwt.sign(payload, process.env.PRIVATE_KEY, Object.assign(defaultOptions, options));
+    return jwt.sign(payload, process.env.PRIVATE_KEY, Object.assign({}, defaultOptions, options));
   }
 
   verifyToken(token) {
