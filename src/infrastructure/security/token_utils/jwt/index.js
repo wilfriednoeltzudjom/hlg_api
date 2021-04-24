@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const TokenUtils = require('../token-utils');
 const { SessionExpiredError } = require('../../../../application/helpers/errors');
+const logger = require('../../../logger');
 
 const defaultOptions = {
   issuer: 'hlg',
@@ -10,6 +11,8 @@ const defaultOptions = {
 
 module.exports = class JwtTokenUtils extends TokenUtils {
   generateToken(payload, options = {}) {
+    logger.info(process.env.PRIVATE_KEY);
+    logger.info(formatEnvKey(process.env.PRIVATE_KEY));
     return jwt.sign(payload, formatEnvKey(process.env.PRIVATE_KEY), Object.assign({}, defaultOptions, options));
   }
 
