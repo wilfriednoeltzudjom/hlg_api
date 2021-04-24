@@ -10,14 +10,14 @@ const defaultOptions = {
 
 module.exports = class JwtTokenUtils extends TokenUtils {
   generateToken(payload, options = {}) {
-    return jwt.sign(payload, process.env.PRIVATE_KEY, Object.assign({}, defaultOptions, options));
+    return jwt.sign(payload, formatEnvKey(process.env.PRIVATE_KEY), Object.assign({}, defaultOptions, options));
   }
 
   verifyToken(token) {
     const { issuer, algorithm } = defaultOptions;
 
     try {
-      jwt.verify(token, process.env.PUBLIC_KEY, { issuer, algorithms: [algorithm] });
+      jwt.verify(token, formatEnvKey(process.env.PUBLIC_KEY), { issuer, algorithms: [algorithm] });
     } catch (error) {
       if (error.name === 'TokenExpiredError') throw new SessionExpiredError(`You are allowed to access this resource: token ${token} has expired`);
       throw new UnauthorizedError(`You are allowed to access this resource: token ${token} is not recognized`);
@@ -28,3 +28,7 @@ module.exports = class JwtTokenUtils extends TokenUtils {
     return jwt.decode(token, { complete: true });
   }
 };
+
+function formatEnvKey(key = '') {
+  return key.replace(/\\n/gm, '\n');
+}
