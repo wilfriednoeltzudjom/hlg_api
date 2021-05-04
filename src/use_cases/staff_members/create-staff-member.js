@@ -7,7 +7,7 @@ module.exports = function buildCreateStaffMember({ databaseService, hashUtils })
   const { staffMemberRepository } = databaseService;
   const createAccountUseCase = buildCreateAccountUseCase({ databaseService, hashUtils });
 
-  async function execute({ gender, firstName, lastName, birthDate, email, phone, identityNumber, homeAddress, role, username, password }) {
+  async function execute({ gender, firstName, lastName, birthDate, email, phone, identityNumber, homeAddress, role, username, password } = {}) {
     const staffMember = StaffMember.newInstance({ gender, firstName, lastName, birthDate, phone, email, identityNumber });
     staffMember.homeAddress = Address.newInstance(homeAddress);
     await ensureStaffMemberDoesNotExit(staffMember);

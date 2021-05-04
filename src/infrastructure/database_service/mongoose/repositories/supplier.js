@@ -3,16 +3,13 @@ const { Supplier } = require('../../../../database/entities');
 const { SupplierModel } = require('../models');
 const assignSearchingParams = require('../utils/assign-searching-params');
 const defaultSortingParams = require('../utils/default-sorting-params');
-
-async function parseSupplierModel(supplierModel, data = {}, options = {}) {
-  if (!supplierModel) return;
-
-  const supplier = Supplier.fromJSON(Object.assign({}, supplierModel.toJSON(), data));
-
-  return supplier;
-}
+const formatUpdates = require('../utils/format-updates');
 
 module.exports = class MongooseSupplierRepository extends SupplierRepository {
+  static newInstance() {
+    return new MongooseSupplierRepository();
+  }
+
   async create(supplier) {
     const supplierModel = new SupplierModel(supplier.toJSON());
     await supplierModel.save();
@@ -34,7 +31,7 @@ module.exports = class MongooseSupplierRepository extends SupplierRepository {
 
   async forceUpdateOne(params = {}, updates = {}) {
     const supplierModel = await SupplierModel.findOne(params);
-    Object.assign(supplierModel, updates);
+    Object.assign(supplierModel, formatUpdates(updates));
     await supplierModel.save();
 
     return parseSupplierModel(supplierModel);
@@ -54,3 +51,11 @@ module.exports = class MongooseSupplierRepository extends SupplierRepository {
     return this.forceUpdateOne({ id: supplierId }, deleteParams);
   }
 };
+
+async function parseSupplierModel(supplierModel, data = {}) {
+  if (!supplierModel) return;
+
+  const supplier = Supplier.fromJSON({ ...supplierModel.toJSON(), ...data });
+
+  return supplier;
+}

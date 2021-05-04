@@ -37,7 +37,7 @@ module.exports = function buildSupplier({ idGeneration, dataValidation, dateUtil
     constructor({ id, createdAt, updatedAt, updatedBy, deleted, deletedAt, deletedBy, code, companyName, email, phone, officeAddress }) {
       super({ id, createdAt, updatedAt, updatedBy, deleted, deletedAt, deletedBy });
 
-      this.code = code;
+      if (code) this.code = code;
       this.companyName = companyName;
       this.email = email;
       this.phone = phone;
@@ -102,7 +102,7 @@ module.exports = function buildSupplier({ idGeneration, dataValidation, dateUtil
 
     static fromJSON({ officeAddress, ...restProps }) {
       const subProps = {};
-      if (dataValidation.isValidObject(officeAddress)) subProps.officeAddress = Address.fromJSON(officeAddress);
+      if (dataValidation.isValidJSONObject(officeAddress)) subProps.officeAddress = Address.fromJSON(officeAddress);
 
       return new Supplier({ ...restProps, ...subProps });
     }
@@ -115,6 +115,7 @@ module.exports = function buildSupplier({ idGeneration, dataValidation, dateUtil
       deleted = false,
       deletedAt,
       deletedBy,
+      code,
       companyName,
       email,
       phone,
@@ -128,6 +129,7 @@ module.exports = function buildSupplier({ idGeneration, dataValidation, dateUtil
         deleted,
         deletedAt,
         deletedBy,
+        code,
         companyName,
         email,
         phone,

@@ -3,14 +3,6 @@ const { StaffMember } = require('../../../../database/entities');
 const { StaffMemberModel } = require('../models');
 const assignSearchingParams = require('../utils/assign-searching-params');
 
-async function parseStaffMemberModel(staffMemberModel, data = {}, options = {}) {
-  if (!staffMemberModel) return;
-
-  const staffMember = StaffMember.fromJSON(Object.assign(staffMemberModel.toJSON(), data));
-
-  return staffMember;
-}
-
 module.exports = class MongooseStaffMemberRepository extends StaffMemberRepository {
   async create(staffMember) {
     const staffMemberModel = new StaffMemberModel(staffMember.toJSON());
@@ -26,3 +18,11 @@ module.exports = class MongooseStaffMemberRepository extends StaffMemberReposito
     return parseStaffMemberModel(staffMemberModel);
   }
 };
+
+async function parseStaffMemberModel(staffMemberModel, data = {}) {
+  if (!staffMemberModel) return;
+
+  const staffMember = StaffMember.fromJSON(Object.assign(staffMemberModel.toJSON(), data));
+
+  return staffMember;
+}

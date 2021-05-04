@@ -1,3 +1,4 @@
+const { isValidValue } = require('./entity-utils');
 const { ParameterError } = require('./errors');
 
 const entitiesClassNames = Object.freeze({
@@ -37,10 +38,20 @@ function validateUploadedFile({ uploadedFile, required = false, errorMessagePref
   validateEntity(uploadedFile, entitiesClassNames.UPLOADED_FILE, required, errorMessagePrefix);
 }
 
+function isInstanceOfCategory(category) {
+  return isValidValue(category) && category.constructor.name === entitiesClassNames.CATEGORY;
+}
+
+function isInstanceOfSupplier(supplier) {
+  return isValidValue(supplier) && supplier.constructor.name === entitiesClassNames.SUPPLIER;
+}
+
 module.exports = {
   validateCategory,
   validateSupplier,
   validateAccount,
   validateAddress,
   validateUploadedFile,
+  isInstanceOfCategory,
+  isInstanceOfSupplier,
 };

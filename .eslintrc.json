@@ -5,7 +5,7 @@
     "node": true,
     "mocha": true
   },
-  "extends": ["airbnb", "prettier"],
+  "extends": ["eslint:recommended", "prettier"],
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"
@@ -24,7 +24,7 @@
     ],
     "no-console": "off",
     "class-methods-use-this": "off",
-    "no-unused-vars": "warn",
+    "no-unused-vars": ["warn", { "varsIgnorePattern": "[iI]gnored", "args": "none" }],
     "no-new": "off",
     "no-eval": "off",
     "lines-between-class-members": "off"

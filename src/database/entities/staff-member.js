@@ -208,8 +208,8 @@ module.exports = function buildStaffMember({ idGeneration, dataValidation, dateU
 
     static fromJSON({ homeAddress, photo, ...restProps }) {
       const subProps = {};
-      if (dataValidation.isValidObject(homeAddress)) subProps.homeAddress = Address.fromJSON(homeAddress);
-      if (dataValidation.isValidObject(photo)) subProps.photo = UploadedFile.fromJSON(photo);
+      if (dataValidation.isValidJSONObject(homeAddress)) subProps.homeAddress = Address.fromJSON(homeAddress);
+      if (dataValidation.isValidJSONObject(photo)) subProps.photo = UploadedFile.fromJSON(photo);
 
       return new StaffMember({ ...restProps, ...subProps });
     }

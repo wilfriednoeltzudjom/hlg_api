@@ -8,9 +8,9 @@ module.exports = function buildSupplier({ dataGeneration, databaseService }) {
   }
 
   async function create(initValues = {}) {
-    const { officeAddress, ...supplierData } = generate(initValues);
+    const { officeAddress, ...restProps } = generate(initValues);
 
-    return supplierRepository.create(Supplier.newInstance({ ...supplierData, officeAddress: Address.newInstance(officeAddress) }));
+    return supplierRepository.create(Supplier.newInstance({ ...restProps, officeAddress: Address.newInstance(officeAddress) }));
   }
 
   return { generate, create };

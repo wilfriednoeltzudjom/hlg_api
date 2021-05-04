@@ -1,5 +1,6 @@
 const Entity = require('../../application/helpers/entity');
 const entityValidator = require('../../application/helpers/entity-validator');
+const { isValidJSONObject, isValidValue } = require('../../application/helpers/entity-utils');
 
 module.exports = function buildCategory({ idGeneration, dataValidation, dateUtils }) {
   function validateCode(code) {
@@ -27,15 +28,10 @@ module.exports = function buildCategory({ idGeneration, dataValidation, dateUtil
     constructor({ id, createdAt, updatedAt, updatedBy, deleted, deletedAt, deletedBy, code, name, description, parent }) {
       super({ id, createdAt, updatedAt, updatedBy, deleted, deletedAt, deletedBy });
 
-      validateCode(code);
-      validateName(name);
-      validateDescription(description);
-      validateCategory(parent);
-
-      this.#code = code;
-      this.#name = name;
-      this.#description = description;
-      this.#parent = parent;
+      if (code) this.code = code;
+      this.name = name;
+      this.description = description;
+      this.parent = parent;
     }
 
     get code() {
@@ -70,7 +66,7 @@ module.exports = function buildCategory({ idGeneration, dataValidation, dateUtil
     }
 
     set parent(parent) {
-      validateCategory(parent, true);
+      validateCategory(parent, isValidValue(parent));
       this.#parent = parent;
     }
 
@@ -81,6 +77,14 @@ module.exports = function buildCategory({ idGeneration, dataValidation, dateUtil
         description: this.#description,
         parent: this.#parent ? this.#parent.toJSON() : {},
       });
+    }
+
+    static fromJSON({ parent, ...restProps }) {
+      const entities = {};
+      if (isValidJSONObject(parent)) entities.parent = Category.fromJSON(parent);
+      else if (entityValidator.isInstanceOfCategory(parent)) entities.parent = parent;
+
+      return new Category({ ...restProps, ...entities });
     }
 
     static newInstance({

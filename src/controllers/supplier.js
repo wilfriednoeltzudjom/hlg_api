@@ -7,8 +7,8 @@ const buildDeleteSupplierUseCase = require('../use_cases/suppliers/delete-suppli
 
 module.exports = function buildSupplierController(dependencies) {
   const createSupplierUseCase = buildCreateSupplierUseCase(dependencies);
-  const updateSupplierUseCase = buildUpdateSupplierUseCase(dependencies);
   const getSuppliersUseCase = buildGetSuppliersUseCase(dependencies);
+  const updateSupplierUseCase = buildUpdateSupplierUseCase(dependencies);
   const deleteSupplierUseCase = buildDeleteSupplierUseCase(dependencies);
 
   async function createSupplier(request) {
@@ -16,15 +16,6 @@ module.exports = function buildSupplierController(dependencies) {
 
     return HttpResponse.created({
       message: 'Your supplier has been successfully saved',
-      data: supplier.toJSON(),
-    });
-  }
-
-  async function updateSupplier(request) {
-    const supplier = await updateSupplierUseCase.execute({ ...request.params, ...request.body });
-
-    return HttpResponse.succeeded({
-      message: 'Your supplier has been successfully updated',
       data: supplier.toJSON(),
     });
   }
@@ -37,6 +28,15 @@ module.exports = function buildSupplierController(dependencies) {
     });
   }
 
+  async function updateSupplier(request) {
+    const supplier = await updateSupplierUseCase.execute({ ...request.params, ...request.body });
+
+    return HttpResponse.succeeded({
+      message: 'Your supplier has been successfully updated',
+      data: supplier.toJSON(),
+    });
+  }
+
   async function deleteSupplier(request) {
     const supplier = await deleteSupplierUseCase.execute({ ...request.params, account: request.user });
 
@@ -46,5 +46,5 @@ module.exports = function buildSupplierController(dependencies) {
     });
   }
 
-  return { createSupplier, updateSupplier, getSuppliers, deleteSupplier };
+  return { createSupplier, getSuppliers, updateSupplier, deleteSupplier };
 };

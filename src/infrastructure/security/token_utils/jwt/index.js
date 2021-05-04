@@ -11,8 +11,6 @@ const defaultOptions = {
 
 module.exports = class JwtTokenUtils extends TokenUtils {
   generateToken(payload, options = {}) {
-    logger.info(process.env.PRIVATE_KEY);
-    logger.info(formatEnvKey(process.env.PRIVATE_KEY));
     return jwt.sign(payload, formatEnvKey(process.env.PRIVATE_KEY), Object.assign({}, defaultOptions, options));
   }
 

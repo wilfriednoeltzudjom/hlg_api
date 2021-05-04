@@ -4,7 +4,7 @@ const { BadRequestError } = require('../../application/helpers/errors');
 module.exports = function buildCreateSupplier({ databaseService }) {
   const { supplierRepository } = databaseService;
 
-  async function execute({ companyName, email, phone, officeAddress }) {
+  async function execute({ companyName, email, phone, officeAddress } = {}) {
     const supplier = Supplier.newInstance({ companyName, email, phone, officeAddress: Address.newInstance(officeAddress) });
     await ensureSupplierDoesNotExist(supplier);
     supplier.code = await generateSupplierCode();

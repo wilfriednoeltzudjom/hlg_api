@@ -13,6 +13,7 @@ const productSchema = new Schema(
     unitBuyingPrice: { type: Number },
     quantity: { type: Number },
     expirationDate: { type: Date },
+    available: { type: Boolean },
     description: { type: String },
     categoryId: { type: String },
     supplierId: { type: String },

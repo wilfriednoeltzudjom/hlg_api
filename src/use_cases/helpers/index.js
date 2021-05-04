@@ -32,8 +32,17 @@ async function findEntity(entityName, entityRepository, params = {}, options = {
 
 function getParamsKeyValueString(params) {
   return Object.keys(params)
+    .filter((keyName) => keyName !== 'deleted')
+    .filter((keyName) => typeof params[keyName] !== 'object')
     .map((keyName) => `${keyName} <${params[keyName]}>`)
     .join(' or ');
 }
 
-module.exports = { getSafeDeleteParams, ensureEntityExist, findEntity, ensureEntityDoesNotExist };
+async function generateEntityCode(entityName = '', entityRepository) {
+  const count = await entityRepository.count();
+  const codePrefix = `${entityName.substr(0, 2).toUpperCase()}-`;
+
+  return codePrefix.concat(String(count + 1).padStart(5, '0'));
+}
+
+module.exports = { getSafeDeleteParams, ensureEntityExist, findEntity, ensureEntityDoesNotExist, generateEntityCode };

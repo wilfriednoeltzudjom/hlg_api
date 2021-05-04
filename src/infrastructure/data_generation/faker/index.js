@@ -55,4 +55,22 @@ module.exports = class FakerDataGeneration extends DataGeneration {
       officeAddress: this.generateAddress(),
     };
   }
+
+  generateCategory() {
+    return {
+      name: faker.random.alpha({ count: 10 }),
+      description: faker.lorem.sentence(),
+    };
+  }
+
+  generateProduct() {
+    return {
+      name: faker.commerce.productName(),
+      brand: faker.company.companyName(),
+      unitBuyingPrice: Number(faker.finance.amount(0, 10000)),
+      quantity: faker.random.number(10),
+      expirationDate: faker.date.future(),
+      description: faker.lorem.paragraph(),
+    };
+  }
 };

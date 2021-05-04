@@ -5,6 +5,8 @@ const MongooseAccountRepository = require('./repositories/account');
 const MongooseStaffMemberRepository = require('./repositories/staff-member');
 const MongooseSessionRepository = require('./repositories/session');
 const MongooseSupplierRepository = require('./repositories/supplier');
+const MongooseCategoryRepository = require('./repositories/category');
+const MongooseProductRepository = require('./repositories/product');
 
 module.exports = class MongooseDatabaseService extends DatabaseService {
   initRepositories() {
@@ -12,6 +14,8 @@ module.exports = class MongooseDatabaseService extends DatabaseService {
     this.staffMemberRepository = new MongooseStaffMemberRepository();
     this.sessionRepository = new MongooseSessionRepository();
     this.supplierRepository = new MongooseSupplierRepository();
+    this.categoryRepository = new MongooseCategoryRepository();
+    this.productRepository = new MongooseProductRepository();
   }
 
   async connectDatabase() {

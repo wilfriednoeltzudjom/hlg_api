@@ -1,7 +1,7 @@
 const { BadRequestError, ParameterError } = require('../../application/helpers/errors');
 
 function isNull(value) {
-  return value === null;
+  return [undefined, null, ''].includes(value);
 }
 
 module.exports = class DataValidation {
@@ -72,7 +72,7 @@ module.exports = class DataValidation {
     this.validateEnum(enumeration, supposedEnumValue, errorMessagePrefix);
   }
 
-  isValidObject(object) {
-    return object !== null && Object.keys(object).length > 0;
+  isValidJSONObject(object) {
+    return !isNull(object) && Object.keys(object).length > 0;
   }
 };

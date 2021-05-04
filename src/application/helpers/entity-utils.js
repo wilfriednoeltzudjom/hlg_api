@@ -20,4 +20,12 @@ function isString(value) {
   return value && typeof value === 'string';
 }
 
-module.exports = { capitalize, capitalizePersonName, toLowerCase };
+function isValidValue(value) {
+  return ![undefined, null].includes(value);
+}
+
+function isValidJSONObject(object) {
+  return isValidValue(object) && Object.keys(object).length > 0;
+}
+
+module.exports = { capitalize, capitalizePersonName, toLowerCase, isValidValue, isValidJSONObject };

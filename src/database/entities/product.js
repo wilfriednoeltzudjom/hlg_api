@@ -1,8 +1,14 @@
 const Entity = require('../../application/helpers/entity');
 const entityValidator = require('../../application/helpers/entity-validator');
 const { BadRequestError } = require('../../application/helpers/errors');
+const { isValidJSONObject, isValidValue } = require('../../application/helpers/entity-utils');
+const buildCategory = require('./category');
+const buildSupplier = require('./supplier');
 
 module.exports = function buildProduct({ idGeneration, dataValidation, dateUtils }) {
+  const Category = buildCategory({ idGeneration, dataValidation, dateUtils });
+  const Supplier = buildSupplier({ idGeneration, dataValidation, dateUtils });
+
   function validateCode(code) {
     dataValidation.validateStringAsRequired(code, 'Product code');
   }
@@ -24,6 +30,10 @@ module.exports = function buildProduct({ idGeneration, dataValidation, dateUtils
     dataValidation.validateNumberAsRequired(quantity, 'Product quantity');
   }
 
+  function validateAvailable(available) {
+    dataValidation.validateBooleanAsRequired(available, 'Product available');
+  }
+
   function validateDescription(description) {
     dataValidation.validateString(description, 'Product description');
   }
@@ -43,6 +53,7 @@ module.exports = function buildProduct({ idGeneration, dataValidation, dateUtils
     #unitBuyingPrice;
     #quantity;
     #expirationDate;
+    #available;
     #description;
     #category;
     #supplier;
@@ -60,6 +71,7 @@ module.exports = function buildProduct({ idGeneration, dataValidation, dateUtils
       brand,
       unitBuyingPrice,
       quantity,
+      available,
       expirationDate,
       description,
       category,
@@ -67,24 +79,16 @@ module.exports = function buildProduct({ idGeneration, dataValidation, dateUtils
     }) {
       super({ id, createdAt, updatedAt, updatedBy, deleted, deletedAt, deletedBy });
 
-      validateCode(code);
-      validateName(name);
-      validateBrand(brand);
-      validateUnitBuyingPrice(unitBuyingPrice);
-      validateQuantity(quantity);
-      validateDescription(description);
-      validateCategory(category);
-      validateSupplier(supplier);
-
-      this.#code = code;
-      this.#name = name;
-      this.#brand = brand;
-      this.#unitBuyingPrice = unitBuyingPrice;
-      this.#quantity = quantity;
-      this.#expirationDate = expirationDate;
-      this.#description = description;
-      this.#category = category;
-      this.#supplier = supplier;
+      if (code) this.code = code;
+      this.name = name;
+      this.brand = brand;
+      this.unitBuyingPrice = unitBuyingPrice;
+      this.quantity = quantity;
+      this.expirationDate = expirationDate;
+      this.available = available;
+      this.description = description;
+      this.category = category;
+      this.supplier = supplier;
     }
 
     get code() {
@@ -140,6 +144,15 @@ module.exports = function buildProduct({ idGeneration, dataValidation, dateUtils
       this.#expirationDate = expirationDate;
     }
 
+    get available() {
+      return this.#available;
+    }
+
+    set available(available) {
+      validateAvailable(available);
+      this.#available = available;
+    }
+
     get description() {
       return this.#description;
     }
@@ -154,7 +167,7 @@ module.exports = function buildProduct({ idGeneration, dataValidation, dateUtils
     }
 
     set category(category) {
-      validateCategory(category, true);
+      validateCategory(category, isValidValue(category));
       this.#category = category;
     }
 
@@ -163,7 +176,7 @@ module.exports = function buildProduct({ idGeneration, dataValidation, dateUtils
     }
 
     set supplier(supplier) {
-      validateSupplier(supplier, true);
+      validateSupplier(supplier, isValidValue(supplier));
       this.#supplier = supplier;
     }
 
@@ -175,10 +188,21 @@ module.exports = function buildProduct({ idGeneration, dataValidation, dateUtils
         unitBuyingPrice: this.#unitBuyingPrice,
         quantity: this.#quantity,
         expirationDate: this.#expirationDate,
+        available: this.#available,
         description: this.#description,
         category: this.#category ? this.#category.toJSON() : {},
         supplier: this.#supplier ? this.#supplier.toJSON() : {},
       });
+    }
+
+    static fromJSON({ category, supplier, ...restProps }) {
+      const entities = {};
+      if (isValidJSONObject(category)) entities.category = Category.fromJSON(category);
+      else if (entityValidator.isInstanceOfCategory(category)) entities.category = category;
+      if (isValidJSONObject(supplier)) entities.supplier = Supplier.fromJSON(supplier);
+      else if (entityValidator.isInstanceOfSupplier(supplier)) entities.supplier = supplier;
+
+      return new Product({ ...restProps, ...entities });
     }
 
     static newInstance({
@@ -195,6 +219,7 @@ module.exports = function buildProduct({ idGeneration, dataValidation, dateUtils
       unitBuyingPrice,
       quantity,
       expirationDate,
+      available = true,
       description,
       category,
       supplier,
@@ -213,6 +238,7 @@ module.exports = function buildProduct({ idGeneration, dataValidation, dateUtils
         unitBuyingPrice,
         quantity,
         expirationDate,
+        available,
         description,
         category,
         supplier,
