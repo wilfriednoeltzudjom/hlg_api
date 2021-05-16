@@ -6,8 +6,8 @@ const { BadRequestError } = require('../../application/helpers/errors');
 module.exports = function buildUpdateSupplier({ databaseService }) {
   const { supplierRepository } = databaseService;
 
-  async function execute({ supplierId, ...supplierData } = {}) {
-    const supplier = Supplier.fromJSON(supplierData);
+  async function execute({ supplierId, data = {} } = {}) {
+    const supplier = Supplier.fromJSON(data);
     await ensureEntityExist(SUPPLIER, supplierRepository, { id: supplierId });
     await ensureSupplierDoesNotExist(supplierId, supplier);
 

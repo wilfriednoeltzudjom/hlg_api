@@ -33,4 +33,18 @@ router.delete('/:supplierId', (req, res, next) => {
     .catch((error) => next(error));
 });
 
+router.post('/search', (req, res, next) => {
+  supplierController
+    .searchSuppliers(HttpRequest.fromExpress(req))
+    .then((httResponse) => res.status(httResponse.status).json(httResponse.toJSON()))
+    .catch((error) => next(error));
+});
+
+router.get('/analytics', (req, res, next) => {
+  supplierController
+    .getSuppliersAnalytics(HttpRequest.fromExpress(req))
+    .then((httResponse) => res.status(httResponse.status).json(httResponse.toJSON()))
+    .catch((error) => next(error));
+});
+
 module.exports = router;

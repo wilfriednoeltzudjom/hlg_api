@@ -5,6 +5,7 @@ const assignSearchingParams = require('../utils/assign-searching-params');
 const defaultSortingParams = require('../utils/default-sorting-params');
 const formatUpdates = require('../utils/format-updates');
 const { isValidValue } = require('../../../../application/helpers/entity-utils');
+const diacriticsUtils = require('../../../diacritics_utils');
 const MongooseCategoryRepository = require('./category');
 const MongooseSupplierRepository = require('./supplier');
 
@@ -43,7 +44,7 @@ class MongooseProductRepository extends ProductRepository {
 
   async updateOne(productId, product, options = {}) {
     const { id, ...restProps } = product.toJSON();
-    const data = extractProductData(product, restProps);
+    const data = extractProductData(product, restProps, options);
 
     return this.forceUpdateOne({ id: id || productId }, restProps, data, options);
   }
@@ -52,8 +53,29 @@ class MongooseProductRepository extends ProductRepository {
     return ProductModel.countDocuments(assignSearchingParams(params));
   }
 
+  async countAll() {
+    return ProductModel.countDocuments();
+  }
+
+  async countDistinct(params = {}, distinctField) {
+    return new Promise((resolve, reject) => {
+      ProductModel.distinct(distinctField, assignSearchingParams(params), function (err, result) {
+        if (err) reject(err);
+
+        resolve(result.length);
+      });
+    });
+  }
+
   async safeDeleteOne(productId, deleteParams) {
     return this.forceUpdateOne({ id: productId }, deleteParams);
+  }
+
+  async search({ searchString } = {}) {
+    const regex = new RegExp(diacriticsUtils.sanitize(searchString), 'gmi');
+    const supplierModels = await ProductModel.find(assignSearchingParams({ searchableStrings: { $in: regex } })).sort(defaultSortingParams);
+
+    return Promise.all(supplierModels.map(parseProductModel));
   }
 }
 
@@ -64,8 +86,9 @@ async function parseProductModel(productModel, data = {}, { includeCategory = tr
 
   const productJSON = productModel.toJSON();
   const product = Product.fromJSON({ ...productJSON, ...data });
+
   if (includeCategory && isValidValue(productJSON.categoryId) && !isValidValue(product.category)) {
-    product.category = await categoryRepository.findOne({ id: productJSON.parentId }, { includeParent: false });
+    product.category = await categoryRepository.findOne({ id: productJSON.categoryId }, { includeParent: false });
   }
   if (includeSupplier && isValidValue(productJSON.supplierId) && !isValidValue(product.supplier)) {
     product.supplier = await supplierRepository.findOne({ id: productJSON.supplierId });
@@ -74,13 +97,17 @@ async function parseProductModel(productModel, data = {}, { includeCategory = tr
   return product;
 }
 
-function extractProductData(product, productJSON) {
+function extractProductData(product, productJSON, options = {}) {
   const data = {};
-  if (isValidValue(product.category)) {
+  if (options.resetCategory) {
+    productJSON.categoryId = '';
+  } else if (isValidValue(product.category)) {
     productJSON.categoryId = product.category.id;
     data.category = product.category;
   }
-  if (isValidValue(product.supplier)) {
+  if (options.resetSupplier) {
+    productJSON.supplierId = '';
+  } else if (isValidValue(product.supplier)) {
     productJSON.supplierId = product.supplier.id;
     data.supplier = product.supplier;
   }

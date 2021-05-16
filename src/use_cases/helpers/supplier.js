@@ -11,4 +11,16 @@ async function findSupplier(supplierRepository, params = {}, options = {}) {
   return supplier;
 }
 
-module.exports = { findSupplier };
+async function setAnalyticsOnEachSupplier(databaseService, suppliers) {
+  const { productRepository } = databaseService;
+
+  return Promise.all(
+    suppliers.map(async function (supplier) {
+      supplier.productsCount = await productRepository.count({ supplierId: supplier.id });
+
+      return supplier;
+    })
+  );
+}
+
+module.exports = { findSupplier, setAnalyticsOnEachSupplier };

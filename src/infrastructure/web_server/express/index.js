@@ -12,6 +12,7 @@ const authHandler = require('./middlewares/auth-handler');
 const errorHandler = require('./middlewares/error-handler');
 const loggingHandler = require('./middlewares/logging-handler');
 const accessRightsHandler = require('./middlewares/access-rights-handler');
+const parseBooleanPropertiesHandler = require('./middlewares/parse-boolean-properties-handler');
 
 const { accountRoles } = require('../../../database/enums');
 
@@ -23,6 +24,7 @@ function start(port) {
   app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
   app.use(cookieParser());
+  app.use(parseBooleanPropertiesHandler());
 
   app.use('/v1/accounts', accountRoutes);
   app.use('/v1/staff-members', authHandler, staffMemberRoutes);

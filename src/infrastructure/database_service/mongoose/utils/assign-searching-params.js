@@ -1,3 +1,3 @@
-module.exports = function (params) {
+module.exports = function (params = {}) {
   return Object.assign(params, { deleted: false });
 };

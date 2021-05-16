@@ -33,4 +33,18 @@ router.delete('/:productId', (req, res, next) => {
     .catch((error) => next(error));
 });
 
+router.post('/search', (req, res, next) => {
+  productController
+    .searchProducts(HttpRequest.fromExpress(req))
+    .then((httResponse) => res.status(httResponse.status).json(httResponse.toJSON()))
+    .catch((error) => next(error));
+});
+
+router.get('/analytics', (req, res, next) => {
+  productController
+    .getProductsAnalytics(HttpRequest.fromExpress(req))
+    .then((httResponse) => res.status(httResponse.status).json(httResponse.toJSON()))
+    .catch((error) => next(error));
+});
+
 module.exports = router;

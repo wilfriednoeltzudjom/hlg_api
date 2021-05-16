@@ -28,4 +28,10 @@ function isValidJSONObject(object) {
   return isValidValue(object) && Object.keys(object).length > 0;
 }
 
-module.exports = { capitalize, capitalizePersonName, toLowerCase, isValidValue, isValidJSONObject };
+function isDecimal(value) {
+  const valueParts = String(value).split('.');
+
+  return valueParts.length > 1 && Number(valueParts[1]) > 0;
+}
+
+module.exports = { capitalize, capitalizePersonName, toLowerCase, isValidValue, isValidJSONObject, isDecimal, isString };

@@ -1,3 +1,4 @@
+const { isString } = require('../../application/helpers/entity-utils');
 const { ResourceNotFoundError, BadRequestError } = require('../../application/helpers/errors');
 
 function getSafeDeleteParams(dateUtils, account) {
@@ -34,15 +35,19 @@ function getParamsKeyValueString(params) {
   return Object.keys(params)
     .filter((keyName) => keyName !== 'deleted')
     .filter((keyName) => typeof params[keyName] !== 'object')
-    .map((keyName) => `${keyName} <${params[keyName]}>`)
+    .map((keyName) => `${keyName} `.concat(params[keyName]))
     .join(' or ');
 }
 
 async function generateEntityCode(entityName = '', entityRepository) {
-  const count = await entityRepository.count();
+  const count = await entityRepository.countAll();
   const codePrefix = `${entityName.substr(0, 2).toUpperCase()}-`;
 
   return codePrefix.concat(String(count + 1).padStart(5, '0'));
 }
 
-module.exports = { getSafeDeleteParams, ensureEntityExist, findEntity, ensureEntityDoesNotExist, generateEntityCode };
+function ensureSearchDataAreValid({ searchString } = {}) {
+  if (!isString(searchString)) throw new BadRequestError('Parameter <searchString> must be of type <string>');
+}
+
+module.exports = { getSafeDeleteParams, ensureEntityExist, findEntity, ensureEntityDoesNotExist, generateEntityCode, ensureSearchDataAreValid };

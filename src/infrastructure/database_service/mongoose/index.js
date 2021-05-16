@@ -8,6 +8,8 @@ const MongooseSupplierRepository = require('./repositories/supplier');
 const MongooseCategoryRepository = require('./repositories/category');
 const MongooseProductRepository = require('./repositories/product');
 
+const { SupplierModel } = require('./models');
+
 module.exports = class MongooseDatabaseService extends DatabaseService {
   initRepositories() {
     this.accountRepository = new MongooseAccountRepository();
@@ -29,6 +31,20 @@ module.exports = class MongooseDatabaseService extends DatabaseService {
   async closeDatabase() {
     await mongoose.connection.dropDatabase();
     await mongoose.connection.close();
+  }
+
+  async clearDatabase() {
+    const { collections } = mongoose.connection;
+
+    return Promise.all(
+      Object.keys(collections)
+        .map((collectionName) => collections[collectionName])
+        .map((collection) => collection.deleteMany())
+    );
+  }
+
+  async ensureIndexes() {
+    await SupplierModel.ensureIndexes();
   }
 
   async startTransaction() {

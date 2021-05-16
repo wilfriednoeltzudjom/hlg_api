@@ -27,6 +27,10 @@ module.exports = function buildSupplier({ idGeneration, dataValidation, dateUtil
     entityValidator.validateAddress({ address: officeAddress, required, errorMessagePrefix: 'Supplier officeAddress' });
   }
 
+  function validateProductsCount(productsCount) {
+    dataValidation.validateNumber(productsCount, 'Supplier products count');
+  }
+
   return class Supplier extends Entity {
     #code;
     #companyName;
@@ -34,14 +38,17 @@ module.exports = function buildSupplier({ idGeneration, dataValidation, dateUtil
     #phone;
     #officeAddress;
 
+    #productsCount;
+
     constructor({ id, createdAt, updatedAt, updatedBy, deleted, deletedAt, deletedBy, code, companyName, email, phone, officeAddress }) {
       super({ id, createdAt, updatedAt, updatedBy, deleted, deletedAt, deletedBy });
 
       if (code) this.code = code;
       this.companyName = companyName;
-      this.email = email;
-      this.phone = phone;
+      if (email) this.email = email;
+      if (phone) this.phone = phone;
       this.officeAddress = officeAddress;
+      this.productsCount = 0;
     }
 
     get code() {
@@ -89,6 +96,15 @@ module.exports = function buildSupplier({ idGeneration, dataValidation, dateUtil
       this.#officeAddress = officeAddress;
     }
 
+    get productsCount() {
+      return this.#productsCount;
+    }
+
+    set productsCount(productsCount) {
+      validateProductsCount(productsCount);
+      this.#productsCount = productsCount;
+    }
+
     toJSON() {
       return {
         ...super.toJSON(),
@@ -97,6 +113,7 @@ module.exports = function buildSupplier({ idGeneration, dataValidation, dateUtil
         email: this.#email,
         phone: this.#phone,
         officeAddress: this.#officeAddress ? this.#officeAddress.toJSON() : {},
+        productsCount: this.#productsCount,
       };
     }
 

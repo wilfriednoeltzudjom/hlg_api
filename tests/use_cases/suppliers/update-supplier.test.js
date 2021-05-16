@@ -13,7 +13,7 @@ describe('Use Cases - Update Supplier', () => {
 
   it('should succeed and update supplier information', async () => {
     const supplierUpdates = SupplierFactory.generate();
-    const updatedSupplier = await expect(updateSupplierUseCase.execute({ supplierId: shared.supplier.id, ...supplierUpdates })).to.be.fulfilled;
+    const updatedSupplier = await expect(updateSupplierUseCase.execute({ supplierId: shared.supplier.id, data: supplierUpdates })).to.be.fulfilled;
     expect(updatedSupplier.companyName).to.be.eq(supplierUpdates.companyName);
   });
 });

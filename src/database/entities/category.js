@@ -19,11 +19,22 @@ module.exports = function buildCategory({ idGeneration, dataValidation, dateUtil
     entityValidator.validateCategory({ category, required, errorMessagePrefix: 'Category parent' });
   }
 
+  function validateSubCategoriesCount(subCategoriesCount) {
+    dataValidation.validateNumber(subCategoriesCount, 'Category subCategoriesCount');
+  }
+
+  function validateProductsCount(subCategoriesCount) {
+    dataValidation.validateNumber(subCategoriesCount, 'Category productsCount');
+  }
+
   return class Category extends Entity {
     #code;
     #name;
     #description;
     #parent;
+
+    #subCategoriesCount;
+    #productsCount;
 
     constructor({ id, createdAt, updatedAt, updatedBy, deleted, deletedAt, deletedBy, code, name, description, parent }) {
       super({ id, createdAt, updatedAt, updatedBy, deleted, deletedAt, deletedBy });
@@ -32,6 +43,8 @@ module.exports = function buildCategory({ idGeneration, dataValidation, dateUtil
       this.name = name;
       this.description = description;
       this.parent = parent;
+      this.subCategoriesCount = 0;
+      this.productsCount = 0;
     }
 
     get code() {
@@ -70,12 +83,32 @@ module.exports = function buildCategory({ idGeneration, dataValidation, dateUtil
       this.#parent = parent;
     }
 
+    get subCategoriesCount() {
+      return this.#subCategoriesCount;
+    }
+
+    set subCategoriesCount(subCategoriesCount) {
+      validateSubCategoriesCount(subCategoriesCount);
+      this.#subCategoriesCount = subCategoriesCount;
+    }
+
+    get productsCount() {
+      return this.#productsCount;
+    }
+
+    set productsCount(productsCount) {
+      validateProductsCount(productsCount);
+      this.#productsCount = productsCount;
+    }
+
     toJSON() {
       return Object.assign(super.toJSON(), {
         code: this.#code,
         name: this.#name,
         description: this.#description,
         parent: this.#parent ? this.#parent.toJSON() : {},
+        subCategoriesCount: this.#subCategoriesCount,
+        productsCount: this.#productsCount,
       });
     }
 

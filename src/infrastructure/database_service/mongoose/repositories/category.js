@@ -5,6 +5,7 @@ const assignSearchingParams = require('../utils/assign-searching-params');
 const defaultSortingParams = require('../utils/default-sorting-params');
 const formatUpdates = require('../utils/format-updates');
 const { isValidValue } = require('../../../../application/helpers/entity-utils');
+const diacriticsUtils = require('../../../diacritics_utils');
 
 class MongooseCategoryRepository extends CategoryRepository {
   static newInstance() {
@@ -41,7 +42,7 @@ class MongooseCategoryRepository extends CategoryRepository {
 
   async updateOne(categoryId, category, options = {}) {
     const { id, ...restProps } = category.toJSON();
-    const data = extractCategoryData(category, restProps);
+    const data = extractCategoryData(category, restProps, options);
 
     return this.forceUpdateOne({ id: id || categoryId }, restProps, data, options);
   }
@@ -50,8 +51,19 @@ class MongooseCategoryRepository extends CategoryRepository {
     return CategoryModel.countDocuments(assignSearchingParams(params));
   }
 
+  async countAll() {
+    return CategoryModel.countDocuments();
+  }
+
   async safeDeleteOne(categoryId, deleteParams) {
     return this.forceUpdateOne({ id: categoryId }, deleteParams);
+  }
+
+  async search({ searchString } = {}) {
+    const regex = new RegExp(diacriticsUtils.sanitize(searchString), 'gmi');
+    const supplierModels = await CategoryModel.find(assignSearchingParams({ searchableStrings: { $in: regex } })).sort(defaultSortingParams);
+
+    return Promise.all(supplierModels.map(parseCategoryModel));
   }
 }
 
@@ -68,9 +80,11 @@ async function parseCategoryModel(categoryModel, data = {}, { includeParent = tr
   return category;
 }
 
-function extractCategoryData(category, categoryJSON) {
+function extractCategoryData(category, categoryJSON, options = {}) {
   const data = {};
-  if (isValidValue(category.parent)) {
+  if (options.resetParent) {
+    categoryJSON.parentId = '';
+  } else if (isValidValue(category.parent)) {
     categoryJSON.parentId = category.parent.id;
     data.parent = category.parent;
   }

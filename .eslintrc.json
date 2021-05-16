@@ -16,12 +16,6 @@
   },
   "plugins": ["prettier"],
   "rules": {
-    "prettier/prettier": [
-      "error",
-      {
-        "endOfLine": "auto"
-      }
-    ],
     "no-console": "off",
     "class-methods-use-this": "off",
     "no-unused-vars": ["warn", { "varsIgnorePattern": "[iI]gnored", "args": "none" }],

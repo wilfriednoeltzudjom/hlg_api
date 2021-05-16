@@ -15,6 +15,10 @@ module.exports = class Repository {
 
   count() {}
 
+  countAll() {}
+
+  countDistinct() {}
+
   deleteOne() {}
 
   deleteMany() {}
@@ -24,4 +28,6 @@ module.exports = class Repository {
   safeDeleteMany() {}
 
   isExist() {}
+
+  search() {}
 };

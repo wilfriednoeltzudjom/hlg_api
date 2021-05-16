@@ -4,6 +4,7 @@ const { SupplierModel } = require('../models');
 const assignSearchingParams = require('../utils/assign-searching-params');
 const defaultSortingParams = require('../utils/default-sorting-params');
 const formatUpdates = require('../utils/format-updates');
+const diacriticsUtils = require('../../../diacritics_utils');
 
 module.exports = class MongooseSupplierRepository extends SupplierRepository {
   static newInstance() {
@@ -47,8 +48,19 @@ module.exports = class MongooseSupplierRepository extends SupplierRepository {
     return SupplierModel.countDocuments(assignSearchingParams(params));
   }
 
+  async countAll() {
+    return SupplierModel.countDocuments();
+  }
+
   async safeDeleteOne(supplierId, deleteParams) {
     return this.forceUpdateOne({ id: supplierId }, deleteParams);
+  }
+
+  async search({ searchString } = {}) {
+    const regex = new RegExp(diacriticsUtils.sanitize(searchString), 'gmi');
+    const supplierModels = await SupplierModel.find(assignSearchingParams({ searchableStrings: { $in: regex } })).sort(defaultSortingParams);
+
+    return Promise.all(supplierModels.map(parseSupplierModel));
   }
 };
 

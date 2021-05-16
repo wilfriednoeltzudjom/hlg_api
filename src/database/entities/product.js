@@ -18,7 +18,7 @@ module.exports = function buildProduct({ idGeneration, dataValidation, dateUtils
   }
 
   function validateBrand(brand) {
-    dataValidation.validateStringAsRequired(brand, 'Product brand');
+    dataValidation.validateString(brand, 'Product brand');
   }
 
   function validateUnitBuyingPrice(unitBuyingPrice) {

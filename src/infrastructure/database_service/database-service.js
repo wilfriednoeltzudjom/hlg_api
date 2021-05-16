@@ -9,6 +9,10 @@ module.exports = class DatabaseService {
 
   closeDatabase() {}
 
+  clearDatabase() {}
+
+  ensureIndexes() {}
+
   startTransaction() {}
 
   commitTransaction() {}

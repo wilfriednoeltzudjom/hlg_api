@@ -6,10 +6,15 @@ before(() => {
   envUtils.loadEnvFile(process.env.NODE_ENV);
 });
 
-beforeEach(async () => {
+before(async () => {
   await databaseService.connectDatabase();
+  await databaseService.ensureIndexes();
 });
 
 afterEach(async () => {
+  await databaseService.clearDatabase();
+});
+
+after(async () => {
   await databaseService.closeDatabase();
 });
