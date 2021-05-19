@@ -19,8 +19,13 @@ router.post('/sign-in', (req, res, next) => {
   accountController
     .signIn(HttpRequest.fromExpress(req))
     .then((httpResponse) => {
-      res.cookie(TOKEN_COOKIE, httpResponse.data.token, { maxAge: COOKIE_MAX_AGE, httpOnly: true });
-      res.cookie(SESSION_ID_COOKIE, httpResponse.data.session.id, { maxAge: COOKIE_MAX_AGE, httpOnly: true });
+      const cookiesOptions = { maxAge: COOKIE_MAX_AGE, httpOnly: true };
+      if (process.env.NODE_ENV !== 'development') {
+        cookiesOptions.sameSite = 'none';
+        cookiesOptions.secure = true;
+      }
+      res.cookie(TOKEN_COOKIE, httpResponse.data.token, cookiesOptions);
+      res.cookie(SESSION_ID_COOKIE, httpResponse.data.session.id, cookiesOptions);
       res.status(httpResponse.status).json(httpResponse.toJSON());
     })
     .catch((error) => next(error));
